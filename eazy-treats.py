@@ -3,12 +3,38 @@ Thai up the loose ends. (ugh)
 
 5/24/2014 SDC
 
+
+My most excellent food delivery panel
+SDC 5/22/2014
+
+LEDs
+Power (obvious)
+Wireless = 3 = GPIO27
+Delivering = 2 = GPIO17
+
 """
+
+import RPi.GPIO as GPIO
 
 import threading
 import ordrin
 import requests
 import time
+
+# Use GPIO numbers not pin numbers
+GPIO.setmode(GPIO.BCM)
+
+WIRELESS_LED = 27
+DELIVERING_LED = 17
+BUTTON = 23 
+
+# set up the GPIO channels - one input and one output
+GPIO.setup(WIRELESS_LED, GPIO.OUT)
+GPIO.setup(DELIVERING_LED, GPIO.OUT)
+GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+#input_value = GPIO.input(BUTTON)
+#GPIO.output(WIRELESS_LED, True)
 
 # meny/qty,opt opt opt
 TRAY = "4508321/1+4508589/1,4508591"
@@ -76,13 +102,6 @@ def placeOrder(tray):
     except Exception, val:
         print "Giant fail: %s val: %s" %(Exception, val)
     return rez
-
-"""
-other notes
-
-
-
-"""
 
 if __name__ == "__main__":
     oapi = ordrin.APIs(PRIVATE_KEY, ordrin.TEST)
