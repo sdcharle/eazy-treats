@@ -44,7 +44,7 @@ TRAY = "4508321/1+4508589/1,4508591"
 # 4508589/1,4508591
 
 RESTAURANT_ID = '10399'
-PRIVATE_KEY = 'bllpr4xR0YE1ARqU99uSMBv6_hvupEammAX3NKuSKj0'
+PRIVATE_KEY = 'fvckoff'
 ACCOUNT_EMAIL = 'mistasteve@gmail.com'
 ACCOUNT_PASSWORD = 'mepassword'
 # question, these accounts are specific to me/my key, right?
