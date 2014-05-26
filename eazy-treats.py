@@ -6,9 +6,8 @@ Thai up the loose ends. (ugh)
 PUT these in settings.py:
 RESTAURANT_ID
 PRIVATE_KEY
-ACCOUNT_EMAIL
-ACCOUNT_PASSWORD
-CC_NICK
+CARD_NICK
+ADDR_NICK
 ADDRESS 
 CITY
 ZIP
@@ -45,22 +44,24 @@ GPIO.setmode(GPIO.BCM)
 CONNECTION_LED = 27
 DELIVERING_LED = 17
 BUTTON = 23 
+DELIVERY_CHECK_INTERVAL = 10
+CONNECTION_GOOD = False
+DELIVERING = False
 
 # set up the GPIO channels - one input and one output
 GPIO.setup(CONNECTION_LED, GPIO.OUT)
 GPIO.setup(DELIVERING_LED, GPIO.OUT)
 GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-DELIVERY_CHECK_INTERVAL = 10
-CONNECTION_GOOD = False
-DELIVERING = False
 
 def connectionState(state):
+    global CONNECTION_GOOD # hm.
     if (state != CONNECTION_GOOD):
         GPIO.output(CONNECTION_LED,state)
         CONNECTION_GOOD = state
 
 def deliveryState(state):
+    global DELIVERING
     if state != DELIVERING:
         GPIO.output(DELIVERING_LED, state)
         DELIVERING = state  
@@ -127,11 +128,11 @@ def placeOrder(tray):
     rez = False
     try:
         print "yo it's order time"
-    
+        print "TRAY: %s RESTAURANT_ID: %s" %(tray, RESTAURANT_ID) 
         stuff = oapi.order_user(rid = RESTAURANT_ID, tray = tray, tip =  "3.00", first_name = FIRST_NAME,
                                 last_name = LAST_NAME, email = EMAIL,
                                 current_password = CURRENT_PASSWORD,
-                                nick = "mehome", card_nick = "thing" , delivery_date = "ASAP") 
+                                nick = ADDR_NICK, card_nick = CARD_NICK , delivery_date = "ASAP") 
         print stuff        
         if stuff["msg"] == "Success":
             print "yo you a winner."
