@@ -23,13 +23,16 @@ SDC 5/22/2014
 
 LEDs
 Power (obvious)
-Wireless = 3 = GPIO27
+CONNECTION = 3 = GPIO27
 Delivering = 2 = GPIO17
+
+5/26/2014 SDC
+Basics in place. need to give thought to what do do if delivery fails. And either way, do we just stop accepting
+orders after success, and for how long?
 
 """
 
 import RPi.GPIO as GPIO
-
 import threading
 import ordrin
 import requests
@@ -39,21 +42,28 @@ from settings import *
 # Use GPIO numbers not pin numbers
 GPIO.setmode(GPIO.BCM)
 
-WIRELESS_LED = 27
+CONNECTION_LED = 27
 DELIVERING_LED = 17
 BUTTON = 23 
 
 # set up the GPIO channels - one input and one output
-GPIO.setup(WIRELESS_LED, GPIO.OUT)
+GPIO.setup(CONNECTION_LED, GPIO.OUT)
 GPIO.setup(DELIVERING_LED, GPIO.OUT)
 GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-#input_value = GPIO.input(BUTTON)
-#GPIO.output(WIRELESS_LED, True)
 
 DELIVERY_CHECK_INTERVAL = 10
 CONNECTION_GOOD = False
 DELIVERING = False
+
+def connectionState(state):
+    if (state != CONNECTION_GOOD):
+        GPIO.output(CONNECTION_LED,state)
+        CONNECTION_GOOD = state
+
+def deliveryState(state):
+    if state != DELIVERING:
+        GPIO.output(DELIVERING_LED, state)
+        DELIVERING = state  
 
 def checkDelivery():
     rez = False
@@ -62,28 +72,56 @@ def checkDelivery():
         print stuff
         if stuff["delivery"] == 1:
             rez = True
-        CONNECTION_GOOD = True
+        connectionState(True)       
     except requests.ConnectionError:
         print "Oh snap, connection is out"
-        CONNECTION_GOOD = False
+        connectionState(False)
     except Exception, val:
         print "Giant fail: %s val: %s" %(Exception, val)
+    deliveryState(rez)
     return rez
 
 def deliveryCheckThread():
     while True:
         print "Check Delivery"
-        DELIVERING = checkDelivery()
-        if DELIVERING == True:
-            print "yo they delivering"
-        else:
-            print "they not delivering"
+        checkDelivery()
         time.sleep(DELIVERY_CHECK_INTERVAL)
+        
+"""
+just see if  button
+what to do if order bad though????
+
+"""
 
 def checkInputs():
     while True:
         time.sleep(.2)
-        print "Input checked"
+        if DELIVERING and not GPIO.input(BUTTON):
+            if placeOrder(TRAY):
+                orderGood()
+            else:
+                orderBad()
+
+def orderGood():
+    # little flashy
+    for i in range(5):
+        GPIO.output(DELIVERING_LED, False)        
+        time.sleep(.2)
+        GPIO.output(DELIVERING_LED, True)        
+        time.sleep(.2)
+    time.sleep(10) # wait at least 10 seconds. better would be just turn off delivering for at least a couple hours!
+
+# need something better from a UI standpoint to indicate fails.
+
+def orderBad():
+    for i in range(3):
+        GPIO.output(DELIVERING_LED, False)        
+        time.sleep(.4)
+        GPIO.output(DELIVERING_LED, True)        
+        time.sleep(.4)
+    GPIO.output(DELIVERING_LED,False)
+    time.sleep(10) 
+
 
 def placeOrder(tray):
     rez = False
