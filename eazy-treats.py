@@ -51,20 +51,6 @@ GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #input_value = GPIO.input(BUTTON)
 #GPIO.output(WIRELESS_LED, True)
 
-# meny/qty,opt opt opt
-TRAY = "4508321/1+4508589/1,4508591"
-# pad kee mao chicken, chicken satay
-# 4508515/1,4508517
-# musman
-# 4508589/1,4508591
-
-RESTAURANT_ID = '10399'
-PRIVATE_KEY = 'fvckoff'
-ACCOUNT_EMAIL = 'mistasteve@gmail.com'
-ACCOUNT_PASSWORD = 'mepassword'
-# question, these accounts are specific to me/my key, right?
-CC_NICK = 'hackcard'
-
 DELIVERY_CHECK_INTERVAL = 10
 CONNECTION_GOOD = False
 DELIVERING = False
