@@ -57,7 +57,7 @@ DELIVERING = False
 def checkDelivery():
     rez = False
     try:
-        stuff = oapi.delivery_check('ASAP',RESTAURANT_ID,'3856 S Millstone Way','Bloomington','47401')
+        stuff = oapi.delivery_check('ASAP',RESTAURANT_ID,'street','city','zip')
         if stuff["delivery"] == 1:
             rez = True
         CONNECTION_GOOD = True
@@ -89,7 +89,7 @@ def placeOrder(tray):
         print "yo it's order time"
     
         stuff = oapi.order_user(rid = RESTAURANT_ID, tray = tray, tip =  "3.00", first_name = "Steve",
-                                last_name = "Charlesworth", email = "mistasteve@gmail.com",
+                                last_name = "Chah", email = "mistasteve@gmail.com",
                                 current_password = "mepassword",
                                 nick = "mehome", card_nick = "thing" , delivery_date = "ASAP") 
         print stuff        
