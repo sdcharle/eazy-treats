@@ -29,6 +29,10 @@ Delivering = 2 = GPIO17
 Basics in place. need to give thought to what do do if delivery fails. And either way, do we just stop accepting
 orders after success, and for how long?
 
+7/15/2014 SDC 
+geez man for a long time the ordr.in API just wasn't doing it.
+but today, seems OK!
+
 """
 
 import RPi.GPIO as GPIO
@@ -91,7 +95,6 @@ def deliveryCheckThread():
 """
 just see if  button
 what to do if order bad though????
-
 """
 
 def checkInputs():
@@ -105,11 +108,11 @@ def checkInputs():
 
 def orderGood():
     # little flashy
-    for i in range(5):
+    for i in range(10):
         GPIO.output(DELIVERING_LED, False)        
-        time.sleep(.2)
+        time.sleep(.1)
         GPIO.output(DELIVERING_LED, True)        
-        time.sleep(.2)
+        time.sleep(.1)
     time.sleep(10) # wait at least 10 seconds. better would be just turn off delivering for at least a couple hours!
 
 # need something better from a UI standpoint to indicate fails.
@@ -123,9 +126,9 @@ def orderBad():
     GPIO.output(DELIVERING_LED,False)
     time.sleep(10) 
 
-
 def placeOrder(tray):
     rez = False
+    GPIO.output(DELIVERING_LED, False)        
     try:
         print "yo it's order time"
         print "TRAY: %s RESTAURANT_ID: %s" %(tray, RESTAURANT_ID) 
